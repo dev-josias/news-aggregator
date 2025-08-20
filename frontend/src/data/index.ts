@@ -1,0 +1,131 @@
+export const mockArticles = [
+  {
+    id: 1,
+    title:
+      "Breaking: Major Tech Company Announces Revolutionary AI Breakthrough",
+    description:
+      "Leading technology firm unveils groundbreaking artificial intelligence system that promises to transform multiple industries with unprecedented capabilities.",
+    source: "TechNews",
+    author: "Sarah Johnson",
+    category: "Technology",
+    imageUrl: "https://picsum.photos/400/300?random=1",
+    publishedAt: "2024-01-20T10:30:00Z",
+    url: "#",
+    bookmarked: false,
+  },
+  {
+    id: 2,
+    title: "Global Climate Summit Reaches Historic Agreement on Emissions",
+    description:
+      "World leaders commit to ambitious new targets for carbon reduction, marking a pivotal moment in the fight against climate change.",
+    source: "The Guardian",
+    author: "Michael Chen",
+    category: "Environment",
+    imageUrl: "https://picsum.photos/400/300?random=2",
+    publishedAt: "2024-01-20T08:15:00Z",
+    url: "#",
+    bookmarked: true,
+  },
+  {
+    id: 3,
+    title: "Stock Markets Surge to Record Highs Amid Economic Recovery",
+    description:
+      "Major indices reach unprecedented levels as investors show renewed confidence in global economic prospects following positive employment data.",
+    source: "Financial Times",
+    author: "Emma Williams",
+    category: "Business",
+    imageUrl: "https://picsum.photos/400/300?random=3",
+    publishedAt: "2024-01-20T14:45:00Z",
+    url: "#",
+    bookmarked: false,
+  },
+  {
+    id: 4,
+    title: "Scientists Discover Potential Cure for Rare Disease",
+    description:
+      "Breakthrough research at leading medical institution offers hope to millions suffering from previously untreatable genetic condition.",
+    source: "BBC News",
+    author: "Dr. James Miller",
+    category: "Health",
+    imageUrl: "https://picsum.photos/400/300?random=4",
+    publishedAt: "2024-01-20T11:20:00Z",
+    url: "#",
+    bookmarked: false,
+  },
+  {
+    id: 5,
+    title: "Olympic Games Set to Feature New Sports Categories",
+    description:
+      "International Olympic Committee approves addition of innovative sports disciplines for upcoming summer games, attracting younger audiences.",
+    source: "ESPN",
+    author: "Alex Thompson",
+    category: "Sports",
+    imageUrl: "https://picsum.photos/400/300?random=5",
+    publishedAt: "2024-01-20T09:00:00Z",
+    url: "#",
+    bookmarked: true,
+  },
+  {
+    id: 6,
+    title: "Breakthrough in Quantum Computing Achieved by Research Team",
+    description:
+      "University researchers demonstrate stable quantum entanglement at room temperature, potentially revolutionizing computing capabilities.",
+    source: "Science Daily",
+    author: "Prof. Lisa Anderson",
+    category: "Science",
+    imageUrl: "https://picsum.photos/400/300?random=6",
+    publishedAt: "2024-01-20T13:30:00Z",
+    url: "#",
+    bookmarked: false,
+  },
+  {
+    id: 7,
+    title:
+      "Major Film Festival Announces Groundbreaking Virtual Reality Category",
+    description:
+      "Prestigious international film festival embraces immersive storytelling with dedicated VR competition, signaling industry transformation.",
+    source: "Variety",
+    author: "Robert Davis",
+    category: "Entertainment",
+    imageUrl: "https://picsum.photos/400/300?random=7",
+    publishedAt: "2024-01-20T15:10:00Z",
+    url: "#",
+    bookmarked: false,
+  },
+  {
+    id: 8,
+    title: "Historic Peace Agreement Signed After Decades of Conflict",
+    description:
+      "Two nations end long-standing dispute with comprehensive treaty, opening new era of cooperation and regional stability.",
+    source: "Reuters",
+    author: "Maria Garcia",
+    category: "Politics",
+    imageUrl: "https://picsum.photos/400/300?random=8",
+    publishedAt: "2024-01-20T07:45:00Z",
+    url: "#",
+    bookmarked: true,
+  },
+];
+
+export const categories = [
+  "All",
+  "Technology",
+  "Business",
+  "Sports",
+  "Entertainment",
+  "Science",
+  "Health",
+  "Politics",
+  "Environment",
+];
+export const sources = [
+  "All",
+  "BBC News",
+  "The Guardian",
+  "TechNews",
+  "Financial Times",
+  "Reuters",
+  "ESPN",
+  "Science Daily",
+  "Variety",
+];

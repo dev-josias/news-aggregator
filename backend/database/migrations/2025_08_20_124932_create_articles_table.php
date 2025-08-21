@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string("slug")->unique();
             $table->string("url")->unique();
             $table->string("external_id")->nullable();
-            $table->foreignId("source_id")->references("id")->on("sources")->onDelete("CASCADE");
-            $table->foreignId("category_id")->references("id")->on("categories")->onDelete("CASCADE");
+            $table->foreignId("source_id")->constrained("sources")->cascadeOnDelete();
+            $table->foreignId("category_id")->constrained("categories")->cascadeOnDelete();
             $table->timestamps();
         });
     }

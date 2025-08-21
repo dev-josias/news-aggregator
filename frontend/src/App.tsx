@@ -205,17 +205,15 @@ const App = () => {
 
   return (
     <AuthProvider>
-      <div>
-        <Header onViewChange={setCurrentView} currentView={currentView} />
-        {renderContent()}
-        {toast && (
-          <Toast
-            message={toast.message}
-            type={toast.type}
-            onClose={() => setToast(null)}
-          />
-        )}
-      </div>
+      <Header onViewChange={setCurrentView} currentView={currentView} />
+      {renderContent()}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </AuthProvider>
   );
 };

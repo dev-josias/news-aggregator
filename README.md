@@ -31,6 +31,7 @@ You only need to provide valid **API keys** for **NewsAPI**, **The Guardian**, a
 ### 3. Start the stack
 
 ```bash
+docker compose build api
 docker compose up --build
 ```
 

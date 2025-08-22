@@ -1,221 +1,48 @@
-import { useState } from "react";
-import { mockArticles } from "./data";
-import type { Article } from "./types";
-import LoginModal from "./components/LoginModal";
-import RegisterModal from "./components/RegisterModal";
-import PreferencesModal from "./components/PreferencesModal";
-import SearchFilter from "./components/SearchFilter";
-import ArticleCard from "./components/ArticleCard";
-import StatsSection from "./components/StatsSection";
+// src/App.tsx
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useAuth } from "./hooks/useAuth";
 import Header from "./components/Header";
-import Toast from "./components/Toast";
+import Home from "./pages/Home";
+import Feed from "./pages/Feed";
+import Preferences from "./pages/Preferences";
 import AuthProvider from "./providers/AuthProvider";
-import "./App.css";
+import type { JSX } from "react";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
-const App = () => {
-  const [currentView, setCurrentView] = useState("home");
-  const [articles, setArticles] = useState<Article[]>(mockArticles);
-  const [filteredArticles, setFilteredArticles] =
-    useState<Article[]>(mockArticles);
-  const [loading, setLoading] = useState(false);
-  const [toast, setToast] = useState<{
-    message: string;
-    type: "success" | "error";
-  } | null>(null);
+function PrivateRoute({ children }: { children: JSX.Element }) {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  return user ? children : <Navigate to="/" replace />;
+}
 
-  const handleSearch = (searchTerm: string) => {
-    setLoading(true);
-    setTimeout(() => {
-      const filtered = articles.filter(
-        (article) =>
-          article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          article.description.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredArticles(filtered);
-      setLoading(false);
-    }, 500);
-  };
-
-  const handleFilterChange = (filters: {
-    category: string;
-    source: string;
-  }) => {
-    let filtered = [...articles];
-
-    if (filters.category !== "All") {
-      filtered = filtered.filter((a) => a.category === filters.category);
-    }
-
-    if (filters.source !== "All") {
-      filtered = filtered.filter((a) => a.source === filters.source);
-    }
-
-    setFilteredArticles(filtered);
-  };
-
-  const handleBookmark = (articleId: number) => {
-    setArticles((prevArticles) =>
-      prevArticles.map((article) =>
-        article.id === articleId
-          ? { ...article, bookmarked: !article.bookmarked }
-          : article
-      )
-    );
-    setFilteredArticles((prevArticles) =>
-      prevArticles.map((article) =>
-        article.id === articleId
-          ? { ...article, bookmarked: !article.bookmarked }
-          : article
-      )
-    );
-
-    const article = articles.find((a) => a.id === articleId);
-    setToast({
-      message: article?.bookmarked
-        ? "Removed from bookmarks"
-        : "Added to bookmarks",
-      type: "success",
-    });
-  };
-
-  const renderContent = () => {
-    switch (currentView) {
-      case "login":
-        return <LoginModal onClose={() => setCurrentView("home")} />;
-      case "register":
-        return <RegisterModal onClose={() => setCurrentView("home")} />;
-      case "preferences":
-        return <PreferencesModal onClose={() => setCurrentView("home")} />;
-      case "bookmarks": {
-        const bookmarkedArticles = articles.filter((a) => a.bookmarked);
-        return (
-          <>
-            <div className="search-section">
-              <SearchFilter
-                onSearch={handleSearch}
-                onFilterChange={handleFilterChange}
-              />
-            </div>
-            <div className="articles-container">
-              <h1 className="section-title">📚 Your Bookmarks</h1>
-              {loading ? (
-                <div className="loading">
-                  <div className="loading-spinner"></div>
-                </div>
-              ) : (
-                <div className="articles-grid">
-                  {bookmarkedArticles.map((article) => (
-                    <ArticleCard
-                      key={article.id}
-                      article={article}
-                      onBookmark={handleBookmark}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </>
-        );
-      }
-      case "feed":
-        return (
-          <>
-            <div className="search-section">
-              <SearchFilter
-                onSearch={handleSearch}
-                onFilterChange={handleFilterChange}
-              />
-            </div>
-            <div className="articles-container">
-              <h1 className="section-title">🎯 Your Personalized Feed</h1>
-              {loading ? (
-                <div className="loading">
-                  <div className="loading-spinner"></div>
-                </div>
-              ) : (
-                <div className="articles-grid">
-                  {filteredArticles.slice(0, 4).map((article) => (
-                    <ArticleCard
-                      key={article.id}
-                      article={article}
-                      onBookmark={handleBookmark}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </>
-        );
-      case "trending":
-        return (
-          <>
-            <StatsSection />
-            <div className="articles-container">
-              <h1 className="section-title">🔥 Trending Now</h1>
-              {loading ? (
-                <div className="loading">
-                  <div className="loading-spinner"></div>
-                </div>
-              ) : (
-                <div className="articles-grid">
-                  {filteredArticles.slice(0, 6).map((article) => (
-                    <ArticleCard
-                      key={article.id}
-                      article={article}
-                      onBookmark={handleBookmark}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </>
-        );
-      default:
-        return (
-          <>
-            <div className="search-section">
-              <SearchFilter
-                onSearch={handleSearch}
-                onFilterChange={handleFilterChange}
-              />
-            </div>
-            <StatsSection />
-            <div className="articles-container">
-              <h1 className="section-title">📰 Latest News</h1>
-              {loading ? (
-                <div className="loading">
-                  <div className="loading-spinner"></div>
-                </div>
-              ) : (
-                <div className="articles-grid">
-                  {filteredArticles.map((article) => (
-                    <ArticleCard
-                      key={article.id}
-                      article={article}
-                      onBookmark={handleBookmark}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </>
-        );
-    }
-  };
-
+export default function App() {
   return (
     <AuthProvider>
-      <Header onViewChange={setCurrentView} currentView={currentView} />
-      {renderContent()}
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
-      )}
+      <BrowserRouter>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route
+            path="/feed"
+            element={
+              <PrivateRoute>
+                <Feed />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/preferences"
+            element={
+              <PrivateRoute>
+                <Preferences />
+              </PrivateRoute>
+            }
+          />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </BrowserRouter>
     </AuthProvider>
   );
-};
-
-export default App;
+}

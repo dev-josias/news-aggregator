@@ -1,12 +1,13 @@
 import { createContext } from "react";
 import type { User } from "../types";
 
-export type AuthContextType = {
-  user: User | null;
-  login: (email: string, password: string) => void;
-  register: (name: string, email: string, password: string) => void;
-  logout: () => void;
-  isLoading: boolean;
-};
+const AuthContext = createContext<{
+  user?: User;
+  loading: boolean;
+  login: (e: string, p: string) => Promise<void>;
+  register: (n: string, e: string, p: string, pc: string) => Promise<void>;
+  logout: () => Promise<void>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}>({} as any);
 
-export const AuthContext = createContext<AuthContextType>(null);
+export default AuthContext;

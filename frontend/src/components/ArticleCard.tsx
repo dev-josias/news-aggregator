@@ -1,53 +1,48 @@
-import type { Article } from "../types";
-
-const ArticleCard = ({
-  article,
-  onBookmark,
-}: {
-  article: Article;
-  onBookmark: (id: number) => void;
-}) => {
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export default function ArticleCard({ a }: { a: any }) {
   return (
-    <div className="article-card">
+    <article
+      className="article-card"
+      onClick={() => window.open(a.url, "_blank")}
+    >
       <div className="article-image">
-        <img src={article.imageUrl} alt={article.title} />
-        <span className="article-badge">{article.category}</span>
+        {a.image_url ? <img src={a.image_url} alt={a.title} /> : null}
+        {a.category?.name && (
+          <span className="article-badge">{a.category.name}</span>
+        )}
       </div>
+
       <div className="article-content">
         <div className="article-meta">
           <div className="article-source">
-            <div className="source-icon"></div>
-            <span>{article.source}</span>
+            <div className="source-icon" />
+            <span>{a.source?.name ?? "Source"}</span>
           </div>
-          <span>{formatDate(article.publishedAt)}</span>
+          <time>
+            {a.published_at
+              ? new Date(a.published_at).toLocaleDateString()
+              : ""}
+          </time>
         </div>
-        <h3 className="article-title">{article.title}</h3>
-        <p className="article-description">{article.description}</p>
+
+        <h3 className="article-title" style={{ WebkitLineClamp: 2 }}>
+          {a.title}
+        </h3>
+        {a.excerpt && (
+          <p className="article-description" style={{ WebkitLineClamp: 3 }}>
+            {a.excerpt}
+          </p>
+        )}
+
         <div className="article-footer">
-          <span className="article-author">By {article.author}</span>
+          <span className="article-author">{a.author?.name ?? ""}</span>
           <div className="article-actions">
-            <button
-              className={`action-btn ${article.bookmarked ? "active" : ""}`}
-              onClick={() => onBookmark(article.id)}
-            >
-              {article.bookmarked ? "❤️" : "🤍"}
+            <button className="action-btn" title="Open">
+              🔗
             </button>
-            <button className="action-btn">📤</button>
           </div>
         </div>
       </div>
-    </div>
+    </article>
   );
-};
-
-export default ArticleCard;
+}

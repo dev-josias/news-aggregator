@@ -13,7 +13,7 @@ import Register from "./pages/Register";
 function PrivateRoute({ children }: { children: JSX.Element }) {
   const { user, loading } = useAuth();
   if (loading) return null;
-  return user ? children : <Navigate to="/" replace />;
+  return user ? children : <Navigate to="/login" replace />;
 }
 
 export default function App() {

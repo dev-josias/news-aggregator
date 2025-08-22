@@ -49,13 +49,11 @@ body {
 
 /* Header Styles */
 .header {
-  background: rgba(26, 26, 46, 0.95);
   backdrop-filter: blur(10px);
   padding: 1rem 0;
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
   border-bottom: 1px solid var(--border);
 }
 
@@ -301,8 +299,10 @@ body {
 .section-title {
   font-size: 2rem;
   margin-bottom: 1.5rem;
-  background: linear-gradient(135deg, var(--text), var(--text-secondary));
-  -webkit-text-fill-color: transparent;
+  background: transparent;
+  color: #fff;
+  text-align: center;
+  margin: 10px 0px;
 }
 
 .articles-grid {

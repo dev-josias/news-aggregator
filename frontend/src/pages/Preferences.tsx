@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getSources, getCategories, getAuthors } from "../api/taxonomies";
 import { getPreferences, updatePreferences } from "../api/preferences";
 
@@ -12,6 +12,11 @@ export default function Preferences() {
     categories: number[];
     authors: number[];
   }>({ sources: [], categories: [], authors: [] });
+  const [initial, setInitial] = useState<{
+    sources: number[];
+    categories: number[];
+    authors: number[];
+  } | null>(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -25,8 +30,21 @@ export default function Preferences() {
       setCategories(c.data ?? c);
       setAuthors(a.data ?? a);
       setPrefs(p);
+      setInitial(p);
     });
   }, []);
+
+  const isDirty = useMemo(() => {
+    if (!initial) return false;
+    const same = (a: number[], b: number[]) =>
+      a.length === b.length &&
+      [...a].sort().every((v, i) => v === [...b].sort()[i]);
+    return !(
+      same(prefs.sources, initial.sources) &&
+      same(prefs.categories, initial.categories) &&
+      same(prefs.authors, initial.authors)
+    );
+  }, [prefs, initial]);
 
   const toggle = (k: "sources" | "categories" | "authors", id: number) =>
     setPrefs((p) => ({
@@ -35,14 +53,91 @@ export default function Preferences() {
     }));
 
   const save = async () => {
+    if (!isDirty || saving) return;
     setSaving(true);
-    await updatePreferences(prefs);
-    setSaving(false);
+    try {
+      await updatePreferences(prefs);
+      setInitial(prefs);
+    } finally {
+      setSaving(false);
+    }
   };
 
+  // Optional helpers
+  const selectAll = (
+    k: "sources" | "categories" | "authors",
+    allIds: number[]
+  ) => setPrefs((p) => ({ ...p, [k]: allIds }));
+  const clearAll = (k: "sources" | "categories" | "authors") =>
+    setPrefs((p) => ({ ...p, [k]: [] }));
+
   return (
-    <section className="articles-container">
+    <section className="articles-container" style={{ position: "relative" }}>
       <h2 className="section-title">Your Preferences</h2>
+
+      {/* Quick actions row */}
+      <div
+        style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 12 }}
+      >
+        <button
+          className="btn btn-secondary"
+          onClick={() =>
+            selectAll(
+              "sources",
+              sources.map((s) => s.id)
+            )
+          }
+          disabled={!sources.length}
+        >
+          Select all sources
+        </button>
+        <button
+          className="btn btn-secondary"
+          onClick={() => clearAll("sources")}
+          disabled={!sources.length}
+        >
+          Clear sources
+        </button>
+        <button
+          className="btn btn-secondary"
+          onClick={() =>
+            selectAll(
+              "categories",
+              categories.map((c) => c.id)
+            )
+          }
+          disabled={!categories.length}
+        >
+          Select all categories
+        </button>
+        <button
+          className="btn btn-secondary"
+          onClick={() => clearAll("categories")}
+          disabled={!categories.length}
+        >
+          Clear categories
+        </button>
+        <button
+          className="btn btn-secondary"
+          onClick={() =>
+            selectAll(
+              "authors",
+              authors.map((a) => a.id)
+            )
+          }
+          disabled={!authors.length}
+        >
+          Select all authors
+        </button>
+        <button
+          className="btn btn-secondary"
+          onClick={() => clearAll("authors")}
+          disabled={!authors.length}
+        >
+          Clear authors
+        </button>
+      </div>
+
       <div className="preferences-grid">
         <div className="preference-group">
           <h3 className="preference-title">Sources</h3>
@@ -96,11 +191,40 @@ export default function Preferences() {
         </div>
       </div>
 
+      {/* (Optional) keep the bottom button if you like */}
       <div style={{ marginTop: 16 }}>
-        <button className="btn btn-primary" onClick={save} disabled={saving}>
-          {saving ? "Saving..." : "Save Preferences"}
+        <button
+          className="btn btn-primary"
+          onClick={save}
+          disabled={saving || !isDirty}
+        >
+          {saving ? "Saving..." : isDirty ? "Save Preferences" : "Saved"}
         </button>
       </div>
+
+      {/* Floating Save FAB */}
+      <button
+        onClick={save}
+        disabled={saving || !isDirty}
+        style={{
+          position: "fixed",
+          right: 24,
+          bottom: 24,
+          zIndex: 50,
+          padding: "12px 16px",
+          borderRadius: 9999,
+          boxShadow: "0 10px 20px rgba(0,0,0,0.15)",
+          background: saving || !isDirty ? "#9CA3AF" : "#2563EB",
+          color: "white",
+          cursor: saving || !isDirty ? "not-allowed" : "pointer",
+          transition: "transform .15s ease, opacity .15s ease",
+          opacity: saving ? 0.8 : 1,
+        }}
+        aria-label="Save preferences"
+        title={isDirty ? "Save preferences" : "All changes saved"}
+      >
+        {saving ? "Saving…" : "Save"}
+      </button>
     </section>
   );
 }

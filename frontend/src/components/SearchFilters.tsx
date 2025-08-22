@@ -22,9 +22,9 @@ export default function SearchFilters({ value, onChange }: Props) {
   const [authors, setAuthors] = useState<any[]>([]);
 
   useEffect(() => {
-    getSources().then(setSources);
-    getCategories().then(setCategories);
-    getAuthors().then(setAuthors);
+    getSources().then((res) => setSources(res?.data ?? []));
+    getCategories().then((res) => setCategories(res?.data ?? []));
+    getAuthors().then((res) => setAuthors(res?.data ?? []));
   }, []);
 
   const [qLocal, setQLocal] = useState(value.q ?? "");

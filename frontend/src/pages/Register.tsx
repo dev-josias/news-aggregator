@@ -53,6 +53,10 @@ export default function Register() {
         {err && (
           <div className="toast error" role="alert">
             {err}
+
+            <button className="btn btn-primary" onClick={() => setErr(null)}>
+              Close
+            </button>
           </div>
         )}
 

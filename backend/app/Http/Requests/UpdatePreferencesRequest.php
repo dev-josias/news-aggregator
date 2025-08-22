@@ -3,15 +3,15 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdatePreferencesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
-        return false;
+    public function authorize(): bool {
+        return Auth::check();
     }
 
     /**
@@ -22,9 +22,9 @@ class UpdatePreferencesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "sources" => "array|distinct|exists", 
-            "categories" => "array|distinct|exists", 
-            "authors"  => "array|distinct|exists" 
+            "sources" => "array|distinct|exists:sources,id", 
+            "categories" => "array|distinct|exists:categories,id", 
+            "authors"  => "array|distinct|exists:authors,id" 
         ];
     }
 }

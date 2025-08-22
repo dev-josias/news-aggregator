@@ -23,6 +23,7 @@ class AuthServiceImpl implements \App\Contracts\AuthService {
 
     public function register(array $data): array {
         $user = User::create([
+            "name" => $data["name"],
             "email" => $data["email"],
             "password" => Hash::make($data["password"]),
         ]);

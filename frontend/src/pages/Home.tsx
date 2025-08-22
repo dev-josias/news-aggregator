@@ -20,6 +20,8 @@ export default function Home() {
       .finally(() => setLoading(false));
   }, [JSON.stringify(filters)]);
 
+  console.log(data);
+
   return (
     <>
       <SearchFilters value={filters} onChange={setFilters} />

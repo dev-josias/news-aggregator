@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class Article extends Model
 {
@@ -25,6 +26,16 @@ class Article extends Model
     protected $casts = [
         'published_at' => 'datetime',
     ];
+
+    protected static function booted() {
+            static::creating(function ($article) {
+            if (empty($article->slug)) {
+                $base = Str::limit(Str::slug($article->title ?: 'article'), 80, '');
+                $suffix = substr(md5($article->url), 0, 6);
+                $article->slug = $base . '-' . $suffix;
+            }
+        });
+    }
 
     public function category(): BelongsTo {
         return $this->belongsTo(Category::class);

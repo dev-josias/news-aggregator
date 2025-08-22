@@ -76,9 +76,7 @@ export default function Preferences() {
       <h2 className="section-title">Your Preferences</h2>
 
       {/* Quick actions row */}
-      <div
-        style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 12 }}
-      >
+      <div className="preferences-quick-actions">
         <button
           className="btn btn-secondary"
           onClick={() =>
@@ -191,8 +189,8 @@ export default function Preferences() {
         </div>
       </div>
 
-      {/* (Optional) keep the bottom button if you like */}
-      <div style={{ marginTop: 16 }}>
+      {/* Bottom save button for larger screens */}
+      <div style={{ marginTop: 16, textAlign: "center" }}>
         <button
           className="btn btn-primary"
           onClick={save}
@@ -202,7 +200,7 @@ export default function Preferences() {
         </button>
       </div>
 
-      {/* Floating Save FAB */}
+      {/* Floating Save FAB for mobile */}
       <button
         onClick={save}
         disabled={saving || !isDirty}
@@ -214,14 +212,32 @@ export default function Preferences() {
           padding: "12px 16px",
           borderRadius: 9999,
           boxShadow: "0 10px 20px rgba(0,0,0,0.15)",
-          background: saving || !isDirty ? "#9CA3AF" : "#2563EB",
+          background:
+            saving || !isDirty
+              ? "#6B7280"
+              : "linear-gradient(135deg, #e94560, #ff6b6b)",
           color: "white",
+          border: "none",
           cursor: saving || !isDirty ? "not-allowed" : "pointer",
-          transition: "transform .15s ease, opacity .15s ease",
+          transition: "all 0.3s ease",
           opacity: saving ? 0.8 : 1,
+          fontSize: "0.9rem",
+          fontWeight: "500",
         }}
         aria-label="Save preferences"
         title={isDirty ? "Save preferences" : "All changes saved"}
+        onMouseEnter={(e) => {
+          if (!saving && isDirty) {
+            const elt = e.target as HTMLElement;
+            elt.style.transform = "translateY(-2px)";
+            elt.style.boxShadow = "0 12px 25px rgba(0,0,0,0.2)";
+          }
+        }}
+        onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
+          const elt = e.target as HTMLElement;
+          elt.style.transform = "translateY(0)";
+          elt.style.boxShadow = "0 10px 20px rgba(0,0,0,0.15)";
+        }}
       >
         {saving ? "Saving…" : "Save"}
       </button>

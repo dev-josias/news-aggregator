@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Inspiring;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 
@@ -9,6 +10,10 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 
-Schedule::command('news:fetch-all --since="-6 hours"')
-    ->hourly()
-    ->withoutOverlapping();
+$cmd = 'news:fetch-all --since="-6 hours"';
+
+if (App::environment('local')) {
+    Schedule::command($cmd)->everyMinute()->withoutOverlapping();
+} else {
+    Schedule::command($cmd)->hourly()->withoutOverlapping();
+}

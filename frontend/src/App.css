@@ -268,7 +268,7 @@ body {
 
 .filter-section {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.5rem;
 }
 
@@ -840,6 +840,10 @@ body {
   .search-container {
     padding: 1rem;
     border-radius: 12px;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .search-box {
@@ -851,6 +855,9 @@ body {
   .search-input {
     padding: 0.875rem 1rem;
     font-size: 16px; /* Prevents iOS zoom */
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
   }
 
   .filter-section {
@@ -858,9 +865,16 @@ body {
     gap: 1rem;
   }
 
+  .filter-group {
+    min-width: 0; /* Allow shrinking below content width */
+  }
+
   .filter-select {
     padding: 0.75rem;
     font-size: 16px; /* Prevents iOS zoom */
+    width: 100%;
+    min-width: 0; /* Allow shrinking */
+    box-sizing: border-box;
   }
 
   /* Articles Mobile */

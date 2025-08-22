@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import Toast from "../components/Toast";
 
 export default function Register() {
   const { register } = useAuth();
@@ -24,22 +25,7 @@ export default function Register() {
       await register(name, email, password, confirm);
       nav("/preferences", { replace: true });
     } catch (e: unknown) {
-      let errors: Record<string, string[]> | undefined;
-      let message: string | undefined;
-      if (typeof e === "object" && e !== null && "response" in e) {
-        const errObj = e as {
-          response?: {
-            data?: { errors?: Record<string, string[]>; message?: string };
-          };
-        };
-        errors = errObj.response?.data?.errors;
-        message = errObj.response?.data?.message;
-      }
-      setErr(
-        (errors && Object.values(errors)[0]?.[0]) ||
-          message ||
-          "Registration failed."
-      );
+      setErr("Registration failed. " + (e as Error).message);
     } finally {
       setBusy(false);
     }
@@ -51,13 +37,7 @@ export default function Register() {
 
       <form onSubmit={onSubmit} className="search-container">
         {err && (
-          <div className="toast error" role="alert">
-            {err}
-
-            <button className="btn btn-primary" onClick={() => setErr(null)}>
-              Close
-            </button>
-          </div>
+          <Toast type="error" message={err} onClose={() => setErr(null)} />
         )}
 
         <div className="form-group">

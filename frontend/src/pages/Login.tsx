@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import Toast from "../components/Toast";
+import { parseApiError } from "../utils/apiErrors";
 
 export default function Login() {
   const { login } = useAuth();
@@ -19,22 +21,8 @@ export default function Login() {
       await login(email, password);
       nav("/feed", { replace: true });
     } catch (e: unknown) {
-      let errors: Record<string, string[]> | undefined;
-      let message: string | undefined;
-      if (typeof e === "object" && e !== null && "response" in e) {
-        const errObj = e as {
-          response?: {
-            data?: { errors?: Record<string, string[]>; message?: string };
-          };
-        };
-        errors = errObj.response?.data?.errors;
-        message = errObj.response?.data?.message;
-      }
-      setErr(
-        (errors && Object.values(errors)[0]?.[0]) ||
-          message ||
-          "Invalid credentials."
-      );
+      const parsed = parseApiError(e);
+      setErr(parsed.message || "Invalid credentials.");
     } finally {
       setBusy(false);
     }
@@ -46,9 +34,7 @@ export default function Login() {
 
       <form onSubmit={onSubmit} className="search-container">
         {err && (
-          <div className="toast error" role="alert">
-            {err}
-          </div>
+          <Toast type="error" message={err} onClose={() => setErr(null)} />
         )}
 
         <div className="form-group">

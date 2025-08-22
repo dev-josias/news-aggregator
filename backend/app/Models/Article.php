@@ -18,7 +18,12 @@ class Article extends Model
         'external_id',
         'source_id',
         'author_id',
-        'category_id'
+        'category_id',
+        'published_at',
+    ];
+
+    protected $casts = [
+        'published_at' => 'datetime',
     ];
 
     public function category(): BelongsTo {

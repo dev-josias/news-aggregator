@@ -23,6 +23,7 @@ Copy the example environment file:
 
 ```bash
 cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
 ```
 
 👉 The `.env.example` already includes working defaults for Postgres, Redis, and API service URLs.  
@@ -64,12 +65,14 @@ docker compose exec api php artisan migrate
 
 ## ⚙️ Notes for Testers
 
-- Ingestion runs **automatically** via the `scheduler` service (every hour).
+- Ingestion runs **automatically** via the `scheduler` service (every minute locally).
 - You can also trigger ingestion manually:
 
 ```bash
 docker compose exec api php artisan news:fetch-all --since="-6 hours"
 ```
+
+- Then reload the frontend and the ingested data should display
 
 - Queue jobs are handled by the `queue` service.
 - All articles are stored locally in PostgreSQL and exposed through `/api/v1/articles`.

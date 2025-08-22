@@ -9,6 +9,6 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 
-Schedule::command('news:fetch-all --since="-2 hours"')
+Schedule::command('news:fetch-all --since="-6 hours"')
     ->hourly()
     ->withoutOverlapping();

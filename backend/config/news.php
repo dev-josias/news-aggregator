@@ -1,10 +1,10 @@
 <?php
 return [
-        'newsapi' => [
+    'newsapi' => [
         'base_url' => env('NEWSAPI_BASE_URL', 'https://newsapi.org/v2'),
         'key'      => env('NEWSAPI_KEY'),
         'page_size'=> 100,
-        'language' => 'en',
+        'query' => 'bbc-news'
     ],
     'guardian' => [
         'base_url' => env('GUARDIAN_BASE_URL', 'https://content.guardianapis.com'),

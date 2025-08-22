@@ -10,17 +10,42 @@ use Illuminate\Console\Command;
 
 class NewsFetchAll extends Command
 {
-    protected $signature = 'news:fetch-all {--since=-6 hours}';
+    protected $signature = 'news:fetch-all
+            {--since=-6 hours : How far back to fetch}
+            {--only= : Comma-separated adapter keys (e.g. guardian,newsapi)}
+            {--ignore-enabled : Run all adapters regardless of DB flag}';
     protected $description = 'Fetch news from configured adapters since a time';
 
     public function handle(NewsUpserter $upserter)
     {
         $since = Carbon::parse($this->option('since'));
 
-        foreach (NewsAdapters::all() as $adapter) {
+        $only = trim((string) $this->option('only') ?? '');
+        $ignoreEnabled = (bool) $this->option('ignore-enabled');
+
+        $adapters = match (true) {
+            $only !== '' => NewsAdapters::only(
+                array_map('trim', explode(',', $only))
+            ),
+            $ignoreEnabled => NewsAdapters::all(),
+            default => NewsAdapters::enabled(),
+        };
+
+        if (empty($adapters)) {
+            $this->warn('No adapters resolved (check sources.enabled, bindings, or use --ignore-enabled / --only)');
+            return self::SUCCESS;
+        }
+
+        foreach ($adapters as $adapter) {
             $this->info("Fetching: ".$adapter->key()." since ".$since->toIso8601String());
 
-            $source = Source::firstOrCreate(['key' => $adapter->key()], ['name' => ucfirst($adapter->key())]);
+            $source = Source::firstOrCreate(
+                ['key' => $adapter->key()], 
+                [
+                    'name' => ucfirst($adapter->key()), 
+                    'enabled' => true
+                ],
+            );
             $run = IngestionRun::create([
                 'source_id'  => $source->id,
                 'started_at' => now(),

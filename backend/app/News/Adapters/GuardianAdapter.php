@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\News\Adapters;
+namespace App\News\Adapters;
 use App\Contracts\NewsAdapter;
 use App\DTO\NormalizedArticle;
 use Carbon\Carbon;
@@ -39,6 +39,10 @@ final class GuardianAdapter implements NewsAdapter
 
                 $authors = collect(data_get($it, 'tags', []))
                     ->pluck('webTitle')->filter()->values()->all();
+                    
+                if (empty($it['webTitle']) || empty($it['webUrl'])) {
+                    continue;
+                }
 
                 yield new NormalizedArticle(
                     sourceKey:  'guardian',

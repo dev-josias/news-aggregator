@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\News\Adapters;
+namespace App\News\Adapters;
 use App\Contracts\NewsAdapter;
 use App\DTO\NormalizedArticle;
 use Carbon\Carbon;
@@ -45,11 +45,22 @@ final class NytAdapter implements NewsAdapter
                     if (!empty($m['url'])) { $image = 'https://www.nytimes.com/'.$m['url']; break; }
                 }
 
+                $title = (string) (
+                    data_get($doc, 'headline.main')
+                    ?? data_get($doc, 'headline.print_headline')
+                    ?? data_get($doc, 'snippet')
+                    ?? ''
+                );
+
+                if (empty($title) || empty($doc['web_url'])) {
+                    continue;
+                }
+
                 yield new NormalizedArticle(
                     sourceKey:  'nyt',
                     externalId: $doc['_id'] ?? ($doc['uri'] ?? null),
                     url:        (string) $doc['web_url'],
-                    title:      (string) data_get($doc, 'headline.main'),
+                    title:      $title,
                     excerpt:    data_get($doc, 'abstract') ?? data_get($doc, 'lead_paragraph'),
                     contentText:null,
                     imageUrl:   $image,

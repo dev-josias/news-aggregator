@@ -3,22 +3,57 @@
 namespace App\Services;
 use App\DTO\NormalizedArticle;
 use App\Models\{Article, Author, Category, Source};
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 final class NewsUpserter
 {
-    public function upsert(NormalizedArticle $dto): Article
+
+    private function uniqueSlug(string $base, int $sourceId): string {
+        $slug = $base !== '' ? $base : 'article-'.substr(md5((string) microtime(true)), 0, 6);
+        $try = $slug; $i = 2;
+
+
+        while (Article::where('slug', $try)->exists()) {
+            $try = Str::limit($slug, 76, '') . '-' . $i;
+            $i++;
+            if ($i > 50) { 
+                $try = $slug . '-' . substr(md5($slug.$i), 0, 6);
+                break;
+            }
+        }
+        return $try;
+    }
+    public function upsert(NormalizedArticle $dto): ?Article
     {
+        if (blank($dto->title) || blank($dto->url)) {
+            Log::warning('Skipping article without required fields', [
+                'source' => $dto->sourceKey,
+                'externalId' => $dto->externalId,
+                'url' => $dto->url,
+                'title' => $dto->title,
+            ]);
+            return null;
+        }
+
         $source = Source::firstOrCreate(['key' => $dto->sourceKey], ['name' => ucfirst($dto->sourceKey)]);
 
         $categoryId = null;
         if ($dto->categoryKey) {
-            $category = Category::firstOrCreate(['key' => $dto->categoryKey], ['name' => ucfirst($dto->categoryKey)]);
+            $catKey = Str::slug($dto->categoryKey);
+            $category = Category::firstOrCreate(['key' => $catKey], [
+                'name' => $dto->categoryKey,
+                'external_id' => $dto->categoryKey,
+            ]);
             $categoryId = $category->id;
         }
 
+        $baseSlug = Str::slug(Str::limit($dto->title ?? '', 80));
+        $slug = $this->uniqueSlug($baseSlug, $source->id);
+
         $payload = [
-            'title'        => $dto->title,
+            'title'        => $dto->title ?: 'Untitled Article',
+            'slug'         => $slug,
             'excerpt'      => $dto->excerpt,
             'content_text' => $dto->contentText,
             'url'          => $dto->url,

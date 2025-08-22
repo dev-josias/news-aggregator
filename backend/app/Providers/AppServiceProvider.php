@@ -4,9 +4,9 @@ namespace App\Providers;
 
 use App\Contracts\AuthService;
 use App\Contracts\PreferencesRepository;
-use App\Infrastructure\News\Adapters\GuardianAdapter;
-use App\Infrastructure\News\Adapters\NewsApiAdapter;
-use App\Infrastructure\News\Adapters\NytAdapter;
+use App\News\Adapters\GuardianAdapter;
+use App\News\Adapters\NewsApiAdapter;
+use App\News\Adapters\NytAdapter;
 use App\Repositories\PreferencesRepositoryImpl;
 use App\Services\AuthServiceImpl;
 use Illuminate\Support\ServiceProvider;

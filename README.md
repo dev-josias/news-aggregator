@@ -26,7 +26,7 @@ cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env
 ```
 
-👉 The `.env.example` already includes working defaults for Postgres, Redis, and API service URLs.  
+The `.env.example` already includes working defaults for Postgres, Redis, and API service URLs.  
 You only need to provide valid **API keys** for **NewsAPI**, **The Guardian**, and **NYT** if you want real news ingestion.
 
 ### 3. Start the stack
@@ -53,13 +53,13 @@ docker compose exec api php artisan migrate
 
 ## 📰 Features
 
-- ✅ User registration & login
-- ✅ Personalized preferences (sources, categories, authors)
-- ✅ News ingestion from **NewsAPI, The Guardian, and NYT**
-- ✅ Article search & filtering (keyword, date, source, category)
-- ✅ Automatic ingestion via scheduler (hourly)
-- ✅ Queue workers for ingestion jobs
-- ✅ Mobile-responsive frontend
+- [X] User registration & login
+- [X] Personalized preferences (sources, categories, authors)
+- [X] News ingestion from **NewsAPI, The Guardian, and NYT**
+- [X] Article search & filtering (keyword, date, source, category)
+- [X] Automatic ingestion via scheduler (hourly)
+- [X] Queue workers for ingestion jobs
+- [X] Mobile-responsive frontend
 
 ---
 

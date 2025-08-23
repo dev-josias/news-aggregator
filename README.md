@@ -65,7 +65,7 @@ docker compose exec api php artisan migrate
 
 ## ⚙️ Notes for Testers
 
-- Ingestion runs **automatically** via the `scheduler` service (every minute locally).
+- Ingestion runs **automatically** via the `scheduler` service (every three minutes locally).
 - You can also trigger ingestion manually:
 
 ```bash

@@ -13,7 +13,7 @@ Artisan::command('inspire', function () {
 $cmd = 'news:fetch-all --since="-6 hours"';
 
 if (App::environment('local')) {
-    Schedule::command($cmd)->everyMinute()->withoutOverlapping();
+    Schedule::command($cmd)->everyThreeMinutes()->withoutOverlapping();
 } else {
     Schedule::command($cmd)->hourly()->withoutOverlapping();
 }

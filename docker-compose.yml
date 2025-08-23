@@ -7,6 +7,11 @@ services:
       POSTGRES_PASSWORD: news
     volumes: [dbdata:/var/lib/postgresql/data]
     ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U news -d news"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
 
   redis:
     image: redis:7
@@ -16,8 +21,14 @@ services:
     build: ./backend
     image: news-backend:dev
     env_file: ./backend/.env
-    depends_on: [db, redis]
-    volumes: ["./backend:/var/www/html"]
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./backend:/var/www/html
+      - vendor:/var/www/html/vendor
     command: sh -c "php artisan migrate --force && php-fpm"
 
   web:
@@ -30,17 +41,45 @@ services:
 
   queue:
     image: news-backend:dev
-    command: php artisan queue:work --tries=3 --timeout=120
+    command: >
+      sh -c '
+        until php artisan migrate:status >/dev/null 2>&1; do
+          echo "queue: waiting for migrations...";
+          sleep 3;
+        done;
+        php artisan queue:work --tries=3 --timeout=120
+      '
     env_file: ./backend/.env
-    depends_on: [api, redis, db]
-    volumes: ["./backend:/var/www/html"]
+    depends_on:
+      api:
+        condition: service_started
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./backend:/var/www/html
+      - vendor:/var/www/html/vendor
+    restart: unless-stopped
 
   scheduler:
     image: news-backend:dev
-    command: sh -c 'while :; do php artisan schedule:run; sleep 60; done'
+    command: >
+      sh -c '
+        until php artisan migrate:status >/dev/null 2>&1; do
+          echo "scheduler: waiting for migrations...";
+          sleep 3;
+        done;
+        while :; do
+          php artisan schedule:run;
+          sleep 60;
+        done
+      '
     env_file: ./backend/.env
     depends_on: [api, db, redis]
-    volumes: ["./backend:/var/www/html"]
+    volumes:
+      - ./backend:/var/www/html
+      - vendor:/var/www/html/vendor
 
   frontend:
     image: node:20
@@ -55,3 +94,4 @@ services:
       WATCHPACK_POLLING: "true"
 volumes:
   dbdata:
+  vendor:

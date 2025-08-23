@@ -53,13 +53,13 @@ docker compose exec api php artisan migrate
 
 ## 📰 Features
 
-- [X] User registration & login
-- [X] Personalized preferences (sources, categories, authors)
-- [X] News ingestion from **NewsAPI, The Guardian, and NYT**
-- [X] Article search & filtering (keyword, date, source, category)
-- [X] Automatic ingestion via scheduler (hourly)
-- [X] Queue workers for ingestion jobs
-- [X] Mobile-responsive frontend
+- [x] User registration & login
+- [x] Personalized preferences (sources, categories, authors)
+- [x] News ingestion from **NewsAPI, The Guardian, and NYT**
+- [x] Article search & filtering (keyword, date, source, category)
+- [x] Automatic ingestion via scheduler (hourly)
+- [x] Queue workers for ingestion jobs
+- [x] Mobile-responsive frontend
 
 ---
 
@@ -78,6 +78,54 @@ docker compose exec api php artisan news:fetch-all --since="-6 hours"
 - All articles are stored locally in PostgreSQL and exposed through `/api/v1/articles`.
 
 ---
+
+## ⚠️ Gotchas / Known Issues
+
+- **Vendor folder & autocompletion**
+
+  - The backend `vendor/` folder is built inside the Docker container.
+  - If you need local IDE autocompletion (in VSCode), run:
+    ```bash
+    docker compose exec api composer install
+    ```
+    This will populate `backend/vendor` locally.
+
+- **Scheduler & Queue startup**
+
+  - The `scheduler` and `queue` services wait until migrations are applied.
+  - If you stop/start only the API, they may still show `waiting for migrations...`.  
+    Restart them with:
+    ```bash
+    docker compose restart scheduler queue
+    ```
+
+- **NewsAPI free plan limits**
+
+  - Free API keys may return **0 results** or errors like `maximumResultsReached`.
+
+- **First run latency**
+
+  - On the first launch, ingestion may take a few minutes depending on network/API responses.
+  - Check logs with:
+    ```bash
+    docker compose logs -f scheduler
+    ```
+
+- **Frontend filters crash**
+
+  - If taxonomies (sources, categories, authors) are empty, some filters may throw errors.
+  - Run ingestion once:
+    ```bash
+    docker compose exec api php artisan news:fetch-all --since="-24 hours"
+    ```
+    Then reload the frontend.
+
+- **Ports already in use**
+  - Ensure no local Postgres/Redis/Nginx conflicts:
+    - Postgres → `5432`
+    - Redis → `6379`
+    - Backend → `9000`
+    - Frontend → `5173`
 
 ## 📜 License
 
